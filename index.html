@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & Drop Quiz Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffc600 0%, #ff8c00 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #ffc600;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #ffc600;
+            box-shadow: 0 0 0 3px rgba(255, 198, 0, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .option-input {
+            flex: 1;
+            margin: 0;
+        }
+
+        .correct-radio {
+            margin-right: 10px;
+        }
+
+        .remove-option {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .remove-option:hover {
+            background: #ff3742;
+        }
+
+        .btn {
+            background: #ffc600;
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #e6b200;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .question-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+
+        .question-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #ffc600;
+        }
+
+        .question-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .question-item p {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .export-section {
+            background: #e8f5e8;
+            border-left-color: #28a745;
+        }
+
+        .code-output {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .code-label {
+            background: #333;
+            color: #ffc600;
+            padding: 5px 10px;
+            border-radius: 4px 4px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .code-content {
+            margin-top: 30px;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffc600;
+            color: #333;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .copy-btn:hover {
+            background: #e6b200;
+        }
+
+        .preview-section {
+            background: #e8f4ff;
+            border-left-color: #007bff;
+        }
+
+        .preview-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 200px;
+            background: white;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #e8f4ff;
+            border-left-color: #007bff;
+            color: #0056b3;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .option-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .correct-radio {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Drag & Drop Quiz Builder</h1>
+            <p>Create interactive quizzes for your eLearning courses</p>
+        </div>
+
+        <div class="content">
+            <!-- Quiz Settings -->
+            <div class="section">
+                <h2><span class="icon">⚙️</span> Quiz Settings</h2>
+                <div class="form-group">
+                    <label for="quiz-title">Quiz Title</label>
+                    <input type="text" id="quiz-title" placeholder="Enter quiz title" value="My Drag & Drop Quiz">
+                </div>
+                <div class="form-group">
+                    <label for="quiz-description">Quiz Description (optional)</label>
+                    <textarea id="quiz-description" placeholder="Enter quiz description"></textarea>
+                </div>
+            </div>
+
+            <!-- Question Builder -->
+            <div class="section">
+                <h2><span class="icon">❓</span> Question Builder</h2>
+                
+                <div class="form-group">
+                    <label for="question-title">Question Title</label>
+                    <input type="text" id="question-title" placeholder="e.g., Question 1: Historical Periods">
+                </div>
+                
+                <div class="form-group">
+                    <label for="question-scenario">Scenario/Context</label>
+                    <textarea id="question-scenario" placeholder="Describe the scenario or context for this question"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="question-prompt">Prompt</label>
+                    <input type="text" id="question-prompt" value="Drag the correct answer to match the scenario" readonly style="background-color: #f8f9fa; cursor: not-allowed;">
+                    <small style="color: #666; font-size: 14px;">This prompt is fixed for all drag-and-drop questions</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Answer Options</label>
+                    
+                    <div id="reuse-options-section" style="display: none; margin-bottom: 15px;">
+                        <div style="background: #e8f4ff; padding: 15px; border-radius: 8px; border: 1px solid #007bff;">
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 0;">
+                                <input type="checkbox" id="reuse-first-options" onchange="toggleReuseOptions()">
+                                <span>Use answer options from first question</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="options-container">
+                        <div class="option-group">
+                            <input type="checkbox" class="correct-checkbox" style="margin-right: 10px;">
+                            <input type="text" class="option-input" placeholder="Enter option text">
+                            <button type="button" class="remove-option" onclick="removeOption(this)">Remove</button>
+                        </div>
+                    </div>
+                    <div id="options-controls">
+                        <button type="button" class="btn btn-secondary" onclick="addOption()">+ Add Option</button>
+                    </div>
+                    
+                    <div id="reused-options-display" style="display: none;">
+                        <p style="color: #007bff; font-style: italic; margin-bottom: 10px;">Using answer options from first question:</p>
+                        <div id="reused-options-list"></div>
+                        <p style="color: #666; font-size: 14px; margin-top: 10px;">Check which option is correct for this question:</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-success" onclick="addQuestion()">Add Question</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearQuestionForm()">Clear Form</button>
+                </div>
+            </div>
+
+            <!-- Question List -->
+            <div class="section">
+                <h2><span class="icon">📝</span> Questions Added (<span id="question-count">0</span>)</h2>
+                <div id="question-list" class="question-list">
+                    <p style="color: #666; text-align: center; padding: 20px;">No questions added yet. Create your first question above!</p>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="clearAllQuestions()">Clear All Questions</button>
+            </div>
+
+            <!-- Preview -->
+            <div class="section preview-section">
+                <h2><span class="icon">👀</span> Preview</h2>
+                <div class="alert alert-info">
+                    <strong>Preview:</strong> This shows how your quiz will look. The actual drag-and-drop functionality will work when exported.
+                </div>
+                <div id="preview-container" class="preview-container">
+                    <p style="color: #666; text-align: center;">Add questions to see preview</p>
+                </div>
+            </div>
+
+            <!-- Export -->
+            <div class="section export-section">
+                <h2><span class="icon">📤</span> Export Quiz</h2>
+                <div class="alert alert-warning">
+                    <strong>Instructions:</strong> Copy the CSS and JavaScript code below and paste them into your HTML page. The quiz will appear where you place the HTML div.
+                </div>
+                
+                <button type="button" class="btn btn-success" onclick="generateExport()">Generate Export Code</button>
+                
+                <div id="export-output" style="display: none;">
+                    <h3>1. CSS Styles (add to your &lt;head&gt; section)</h3>
+                    <div class="code-output">
+                        <div class="code-label">CSS</div>
+                        <button class="copy-btn" onclick="copyToClipboard('css-code')">Copy</button>
+                        <div class="code-content" id="css-code"></div>
+                    </div>
+
+                    <h3>2. JavaScript (add before closing &lt;/body&gt; tag)</h3>
+                    <div class="code-output">
+                        <div class="code-label">JavaScript</div>
+                        <button class="copy-btn" onclick="copyToClipboard('js-code')">Copy</button>
+                        <div class="code-content" id="js-code"></div>
+                    </div>
+
+                    <h3>3. HTML (place where you want the quiz to appear)</h3>
+                    <div class="code-output">
+                        <div class="code-label">HTML</div>
+                        <button class="copy-btn" onclick="copyToClipboard('html-code')">Copy</button>
+                        <div class="code-content" id="html-code"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let optionCounter = 0;
+
+        // Add initial options
+        window.onload = function() {
+            addOption();
+            addOption();
+        };
+
+        function addOption() {
+            const container = document.getElementById('options-container');
+            const optionGroup = document.createElement('div');
+            optionGroup.className = 'option-group';
+            optionGroup.innerHTML = `
+                <input type="checkbox" class="correct-checkbox" style="margin-right: 10px;">
+                <input type="text" class="option-input" placeholder="Enter option text">
+                <button type="button" class="remove-option" onclick="removeOption(this)">Remove</button>
+            `;
+            container.appendChild(optionGroup);
+            optionCounter++;
+        }
+
+        function toggleReuseOptions() {
+            const reuseCheckbox = document.getElementById('reuse-first-options');
+            const optionsContainer = document.getElementById('options-container');
+            const optionsControls = document.getElementById('options-controls');
+            const reusedDisplay = document.getElementById('reused-options-display');
+            const reusedList = document.getElementById('reused-options-list');
+
+            if (reuseCheckbox.checked && questions.length > 0) {
+                // Hide manual options input
+                optionsContainer.style.display = 'none';
+                optionsControls.style.display = 'none';
+                reusedDisplay.style.display = 'block';
+
+                // Show first question's options with checkboxes
+                const firstQuestionOptions = questions[0].options;
+                reusedList.innerHTML = firstQuestionOptions.map((opt, index) => `
+                    <div class="option-group" style="margin-bottom: 10px;">
+                        <input type="checkbox" class="reused-correct-checkbox" data-index="${index}" style="margin-right: 10px;">
+                        <span style="flex: 1; padding: 8px; background: #f8f9fa; border-radius: 5px;">${opt.text}</span>
+                    </div>
+                `).join('');
+            } else {
+                // Show manual options input
+                optionsContainer.style.display = 'block';
+                optionsControls.style.display = 'block';
+                reusedDisplay.style.display = 'none';
+            }
+        }
+
+        function addQuestion() {
+            const title = document.getElementById('question-title').value.trim();
+            const scenario = document.getElementById('question-scenario').value.trim();
+            const prompt = 'Drag the correct answer to match the scenario'; // Fixed prompt
+            
+            if (!title || !scenario) {
+                alert('Please fill in the question title and scenario.');
+                return;
+            }
+
+            const reuseCheckbox = document.getElementById('reuse-first-options');
+            let options = [];
+            let correctAnswerText = '';
+
+            if (reuseCheckbox.checked && questions.length > 0) {
+                // Using first question's options
+                const reusedCheckboxes = document.querySelectorAll('.reused-correct-checkbox');
+                const firstQuestionOptions = questions[0].options;
+                let hasCorrectAnswer = false;
+
+                firstQuestionOptions.forEach((opt, index) => {
+                    const checkbox = document.querySelector(`.reused-correct-checkbox[data-index="${index}"]`);
+                    const isCorrect = checkbox && checkbox.checked;
+                    
+                    options.push({
+                        text: opt.text,
+                        isCorrect: isCorrect
+                    });
+                    
+                    if (isCorrect) {
+                        correctAnswerText = opt.text;
+                        hasCorrectAnswer = true;
+                    }
+                });
+
+                if (!hasCorrectAnswer) {
+                    alert('Please check which option is correct for this question.');
+                    return;
+                }
+            } else {
+                // Using manual options
+                const optionInputs = document.querySelectorAll('.option-input');
+                const correctCheckboxes = document.querySelectorAll('.correct-checkbox');
+                
+                let hasEmptyOption = false;
+                let hasCorrectAnswer = false;
+                
+                optionInputs.forEach((input, index) => {
+                    const text = input.value.trim();
+                    if (text) {
+                        const isCorrect = correctCheckboxes[index] && correctCheckboxes[index].checked;
+                        options.push({
+                            text: text,
+                            isCorrect: isCorrect
+                        });
+                        
+                        if (isCorrect) {
+                            correctAnswerText = text;
+                            hasCorrectAnswer = true;
+                        }
+                    } else {
+                        hasEmptyOption = true;
+                    }
+                });
+
+                if (hasEmptyOption) {
+                    alert('Please fill in all option texts.');
+                    return;
+                }
+
+                if (options.length < 2) {
+                    alert('Please add at least 2 options.');
+                    return;
+                }
+
+                if (!hasCorrectAnswer) {
+                    alert('Please check which option is correct.');
+                    return;
+                }
+            }
+
+            const question = {
+                title: title,
+                scenario: scenario,
+                prompt: prompt,
+                options: options,
+                answer: correctAnswerText
+            };
+
+            questions.push(question);
+            updateQuestionList();
+            updatePreview();
+            clearQuestionForm();
+            
+            // Show reuse options section after first question is added
+            if (questions.length === 1) {
+                document.getElementById('reuse-options-section').style.display = 'block';
+            }
+        }
+
+        function removeOption(button) {
+            const optionsContainer = document.getElementById('options-container');
+            if (optionsContainer.children.length > 2) {
+                button.parentElement.remove();
+            } else {
+                alert('You must have at least 2 options per question.');
+            }
+        }
+
+        function clearQuestionForm() {
+            document.getElementById('question-title').value = '';
+            document.getElementById('question-scenario').value = '';
+            
+            // Reset reuse options
+            const reuseCheckbox = document.getElementById('reuse-first-options');
+            reuseCheckbox.checked = false;
+            
+            // Clear manual options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            container.style.display = 'block';
+            document.getElementById('options-controls').style.display = 'block';
+            document.getElementById('reused-options-display').style.display = 'none';
+            
+            optionCounter = 0;
+            
+            // Add default options
+            addOption();
+            addOption();
+        }
+
+        function updateQuestionList() {
+            const list = document.getElementById('question-list');
+            const count = document.getElementById('question-count');
+            count.textContent = questions.length;
+
+            if (questions.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No questions added yet. Create your first question above!</p>';
+                return;
+            }
+
+            list.innerHTML = questions.map((q, index) => `
+                <div class="question-item">
+                    <h4>${q.title}</h4>
+                    <p><strong>Scenario:</strong> ${q.scenario.substring(0, 100)}${q.scenario.length > 100 ? '...' : ''}</p>
+                    <p><strong>Prompt:</strong> ${q.prompt}</p>
+                    <p><strong>Options:</strong> ${q.options.map(opt => opt.text).join(', ')}</p>
+                    <p><strong>Correct Answer:</strong> ${q.answer}</p>
+                    <button type="button" class="btn btn-danger" onclick="removeQuestion(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeQuestion(index) {
+            questions.splice(index, 1);
+            updateQuestionList();
+            updatePreview();
+        }
+
+        function clearAllQuestions() {
+            if (questions.length > 0 && confirm('Are you sure you want to clear all questions?')) {
+                questions = [];
+                updateQuestionList();
+                updatePreview();
+            }
+        }
+
+        function updatePreview() {
+            const container = document.getElementById('preview-container');
+            
+            if (questions.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Add questions to see preview</p>';
+                return;
+            }
+
+            const quizTitle = document.getElementById('quiz-title').value || 'My Drag & Drop Quiz';
+            const quizDescription = document.getElementById('quiz-description').value;
+
+            let html = `<h2>${quizTitle}</h2>`;
+            if (quizDescription) {
+                html += `<p style="margin-bottom: 20px; color: #666;">${quizDescription}</p>`;
+            }
+
+            questions.forEach((q, index) => {
+                html += `
+                    <div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; background: #fff; border-radius: 8px;">
+                        <h3>${q.title}</h3>
+                        <div style="margin: 15px 0; padding: 15px; background: #f1f1f1; border-radius: 5px;">
+                            ${q.scenario}
+                        </div>
+                        <p><strong>${q.prompt}</strong></p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                            ${q.options.map(opt => `
+                                <div style="background: #ffc600; padding: 10px 15px; border-radius: 5px; cursor: grab;">
+                                    ${opt.text}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; border: 2px dashed #aaa; min-height: 50px; background-color: #f9fafa; border-radius: 5px;">
+                            Drop your answer here
+                        </div>
+                        <button style="background-color: #ffc600; color: #000; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px;">Check</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function generateExport() {
+            if (questions.length === 0) {
+                alert('Please add at least one question before exporting.');
+                return;
+            }
+
+            const quizTitle = document.getElementById('quiz-title').value || 'My Drag & Drop Quiz';
+            const quizDescription = document.getElementById('quiz-description').value;
+
+            // Generate CSS
+            const css = `<style>
+    .drag-drop-quiz {
+        font-family: 'Lato', sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .drag-drop-quiz h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .drag-drop-quiz .quiz-description {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1em;
+    }
+    
+    .drag-drop-quiz .question-section {
+        border: 1px solid #ccc;
+        padding: 25px;
+        margin-bottom: 30px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .drag-drop-quiz .question-title {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+    }
+    
+    .drag-drop-quiz .scenario {
+        margin: 15px 0;
+        padding: 15px;
+        background: #f1f1f1;
+        border-radius: 8px;
+        border-left: 4px solid #ffc600;
+    }
+    
+    .drag-drop-quiz .prompt {
+        font-weight: bold;
+        margin: 15px 0;
+        color: #333;
+    }
+    
+    .drag-drop-quiz .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    .drag-drop-quiz .option {
+        background: #ffc600;
+        padding: 12px 18px;
+        border-radius: 8px;
+        cursor: grab;
+        user-select: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+    
+    .drag-drop-quiz .option:hover {
+        background: #e6b200;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .drag-drop-quiz .option:active {
+        cursor: grabbing;
+    }
+    
+    .drag-drop-quiz .dropzone {
+        margin-top: 15px;
+        padding: 20px;
+        border: 2px dashed #aaa;
+        min-height: 60px;
+        background-color: #f9fafa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-align: center;
+        color: #666;
+    }
+    
+    .drag-drop-quiz .dropzone.dragover {
+        border-color: #ffc600;
+        background-color: #fff9e6;
+    }
+    
+    .drag-drop-quiz .dropzone.correct {
+        border-color: #28a745;
+        background-color: #e8f5e8;
+    }
+    
+    .drag-drop-quiz .dropzone.incorrect {
+        border-color: #dc3545;
+        background-color: #f8e8e8;
+    }
+    
+    .drag-drop-quiz .quiz-button {
+        background-color: #ffc600;
+        color: #333;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-top: 15px;
+        transition: all 0.2s ease;
+    }
+    
+    .drag-drop-quiz .quiz-button:hover {
+        background-color: #e6b200;
+        transform: translateY(-1px);
+    }
+    
+    .drag-drop-quiz .feedback {
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    
+    .drag-drop-quiz .feedback.correct {
+        color: #28a745;
+    }
+    
+    .drag-drop-quiz .feedback.incorrect {
+        color: #dc3545;
+    }
+    
+    @media (max-width: 768px) {
+        .drag-drop-quiz .options {
+            flex-direction: column;
+        }
+        
+        .drag-drop-quiz .option {
+            text-align: center;
+        }
+    }
+</style>`;
+
+            // Generate JavaScript
+            const js = `<script>
+    const dragDropQuestions = ${JSON.stringify(questions)};
+    
+    function initializeDragDropQuiz() {
+        const quizContainer = document.getElementById('drag-drop-quiz');
+        if (!quizContainer) return;
+        
+        let html = \`<div class="drag-drop-quiz">\`;
+        html += \`<h2>${quizTitle}</h2>\`;
+        ${quizDescription ? `html += \`<p class="quiz-description">${quizDescription}</p>\`;` : ''}
+        
+        dragDropQuestions.forEach((q, index) => {
+            html += \`
+                <div class="question-section">
+                    <h3 class="question-title">\${q.title}</h3>
+                    <div class="scenario">\${q.scenario}</div>
+                    <div class="prompt">\${q.prompt}</div>
+                    <div class="options" id="options-\${index}">
+                        \${q.options.map(opt => \`<div class="option" draggable="true">\${opt.text}</div>\`).join('')}
+                    </div>
+                    <div class="dropzone" id="drop-\${index}">Drop your answer here</div>
+                    <div class="feedback" id="feedback-\${index}"></div>
+                    <button class="quiz-button" onclick="checkDragDropAnswer(\${index}, '\${q.answer.replace(/'/g, "\\\\'")}')">Check Answer</button>
+                    <button class="quiz-button" onclick="resetDragDropQuestion(\${index})">Reset</button>
+                </div>
+            \`;
+        });
+        
+        html += \`</div>\`;
+        quizContainer.innerHTML = html;
+        
+        // Add drag and drop event listeners
+        let draggedElement;
+        
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('option')) {
+                draggedElement = e.target;
+                e.target.style.opacity = '0.5';
+            }
+        });
+        
+        document.addEventListener('dragend', (e) => {
+            if (e.target.classList.contains('option')) {
+                e.target.style.opacity = '1';
+            }
+        });
+        
+        document.addEventListener('dragover', (e) => {
+            if (e.target.classList.contains('dropzone')) {
+                e.preventDefault();
+                e.target.classList.add('dragover');
+            }
+        });
+        
+        document.addEventListener('dragleave', (e) => {
+            if (e.target.classList.contains('dropzone')) {
+                e.target.classList.remove('dragover');
+            }
+        });
+        
+        document.addEventListener('drop', (e) => {
+            if (e.target.classList.contains('dropzone')) {
+                e.preventDefault();
+                e.target.classList.remove('dragover');
+                
+                // Clear previous answer
+                const existingOption = e.target.querySelector('.option');
+                if (existingOption) {
+                    const questionIndex = e.target.id.split('-')[1];
+                    const optionsContainer = document.getElementById(\`options-\${questionIndex}\`);
+                    optionsContainer.appendChild(existingOption);
+                }
+                
+                // Add new answer
+                e.target.innerHTML = '';
+                e.target.appendChild(draggedElement);
+                
+                // Clear feedback
+                const questionIndex = e.target.id.split('-')[1];
+                const feedback = document.getElementById(\`feedback-\${questionIndex}\`);
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+                e.target.classList.remove('correct', 'incorrect');
+            }
+        });
+    }
+    
+    function checkDragDropAnswer(index, correct) {
+        const dropzone = document.getElementById(\`drop-\${index}\`);
+        const feedback = document.getElementById(\`feedback-\${index}\`);
+        const answer = dropzone.textContent.trim();
+        
+        dropzone.classList.remove('correct', 'incorrect');
+        feedback.classList.remove('correct', 'incorrect');
+        
+        if (answer === correct) {
+            dropzone.classList.add('correct');
+            feedback.classList.add('correct');
+            feedback.textContent = '✅ Correct! Well done!';
+        } else if (answer === 'Drop your answer here') {
+            feedback.textContent = '⚠️ Please drag an answer to the drop zone.';
+            feedback.style.color = '#ff8c00';
+        } else {
+            dropzone.classList.add('incorrect');
+            feedback.classList.add('incorrect');
+            feedback.textContent = '❌ Incorrect. Try again!';
+        }
+    }
+    
+    function resetDragDropQuestion(index) {
+        const dropzone = document.getElementById(\`drop-\${index}\`);
+        const optionsContainer = document.getElementById(\`options-\${index}\`);
+        const feedback = document.getElementById(\`feedback-\${index}\`);
+        const draggedOption = dropzone.querySelector('.option');
+        
+        if (draggedOption) {
+            optionsContainer.appendChild(draggedOption);
+        }
+        
+        dropzone.classList.remove('correct', 'incorrect');
+        feedback.classList.remove('correct', 'incorrect');
+        feedback.textContent = '';
+        feedback.style.color = '';
+        dropzone.textContent = 'Drop your answer here';
+    }
+    
+    // Initialize the quiz when the page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDragDropQuiz);
+    } else {
+        initializeDragDropQuiz();
+    }
+<\/script>`;
+
+            // Generate HTML
+            const html = `<div id="drag-drop-quiz"></div>`;
+
+            // Display the export code
+            document.getElementById('css-code').textContent = css;
+            document.getElementById('js-code').textContent = js;
+            document.getElementById('html-code').textContent = html;
+            document.getElementById('export-output').style.display = 'block';
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#ffc600';
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#ffc600';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
