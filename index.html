@@ -866,10 +866,19 @@
             // Generate JavaScript
             const js = `<script>
     const dragDropQuestions = ${JSON.stringify(questions)};
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
     
     function initializeDragDropQuiz() {
         const quizContainer = document.getElementById('drag-drop-quiz');
         if (!quizContainer) return;
+
+        shuffleArray(dragDropQuestions);
         
         let html = \`<div class="drag-drop-quiz">\`;
         html += \`<h2>${quizTitle}</h2>\`;
